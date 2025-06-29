@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的数字手账笔记111</title>
+    <title>手账风格笔记网站</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
     <style>
         :root {
             --primary-color: #f9d5cc;
@@ -29,18 +31,20 @@
             background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23f8a8a8' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
             color: var(--text-color);
             line-height: 1.6;
+            padding: 20px 0;
         }
         
         .container {
             max-width: 1000px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 0 20px;
         }
         
         header {
             text-align: center;
             margin-bottom: 30px;
             position: relative;
+            padding: 0 20px;
         }
         
         .header-title {
@@ -110,6 +114,7 @@
         .tab-content {
             display: none;
             padding: 20px;
+            position: relative;
         }
         
         .tab-content.active {
@@ -129,6 +134,7 @@
             position: relative;
             transition: transform 0.3s ease;
             cursor: pointer;
+            border-left: 4px solid var(--accent-color);
         }
         
         .note-item:hover {
@@ -151,6 +157,7 @@
         
         .note-content {
             font-size: 1.1rem;
+            line-height: 1.6;
         }
         
         .editor-container {
@@ -196,7 +203,12 @@
             font-size: 1.1rem;
             transition: background-color 0.3s ease;
             margin-top: 15px;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .btn i {
+            margin-right: 8px;
         }
         
         .btn:hover {
@@ -251,18 +263,55 @@
             margin-bottom: 10px;
         }
         
-        @media (max-width: 768px) {
-            .editor-container {
-                flex-direction: column;
-            }
-            
-            .header-title {
-                font-size: 2.5rem;
-            }
-            
-            .notebook {
-                padding: 20px 15px 20px 40px;
-            }
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filters input, .filters select {
+            padding: 10px;
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            font-family: 'ZCOOL QingKe HuangYou', cursive;
+            font-size: 1rem;
+            background-color: white;
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        #article-content {
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            margin-top: 20px;
+            box-shadow: var(--shadow);
+            line-height: 1.8;
+        }
+        
+        #article-content h1, 
+        #article-content h2, 
+        #article-content h3 {
+            color: var(--accent-color);
+            margin: 20px 0 10px;
+            border-bottom: 2px dashed var(--primary-color);
+            padding-bottom: 5px;
+        }
+        
+        #article-content img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin: 15px 0;
+            box-shadow: var(--shadow);
+        }
+        
+        #article-content blockquote {
+            border-left: 4px solid var(--accent-color);
+            padding: 10px 20px;
+            background-color: rgba(249, 213, 204, 0.2);
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
         }
         
         .empty-state {
@@ -276,12 +325,66 @@
             margin-bottom: 15px;
             color: var(--primary-color);
         }
+        
+        .loading-spinner {
+            display: inline-block;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .editor-container {
+                flex-direction: column;
+            }
+            
+            .header-title {
+                font-size: 2.5rem;
+            }
+            
+            .notebook {
+                padding: 20px 15px 20px 40px;
+            }
+            
+            .filters {
+                flex-direction: column;
+            }
+        }
+        
+        /* 针对打印的样式 */
+        @media print {
+            body {
+                background: white;
+                color: black;
+                padding: 0;
+            }
+            
+            .notebook {
+                box-shadow: none;
+                background: white;
+                padding: 0;
+                margin: 0;
+                min-height: auto;
+            }
+            
+            .tabs, .filters, .btn, .sticker, .instructions {
+                display: none !important;
+            }
+            
+            .tab-content {
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1 class="header-title">我的数字手账笔记111111</h1>
+            <h1 class="header-title">手账笔记</h1>
             <p>记录生活点滴，珍藏美好回忆</p>
         </header>
         
@@ -292,88 +395,136 @@
             
             <div class="tabs">
                 <div class="tab active" data-tab="notes">我的笔记</div>
-                <div class="tab" data-tab="new">写新笔记</div>
                 <div class="tab" data-tab="about">关于</div>
+                <div class="tab" id="print-btn"><i class="fas fa-print"></i> 打印</div>
             </div>
             
             <div class="tab-content active" id="notes-content">
-                <h2>最近的笔记</h2>
-                <ul class="note-list">
-                    <li class="note-item">
-                        <div class="note-title">春日漫步</div>
-                        <div class="note-date">2023年4月15日</div>
-                        <div class="note-content">今天天气真好，公园里的樱花都开了，粉色的花瓣随风飘落，像下了一场樱花雨...</div>
-                    </li>
-                    <li class="note-item">
-                        <div class="note-title">读书笔记 - 《平凡的世界》</div>
-                        <div class="note-date">2023年4月10日</div>
-                        <div class="note-content">路遥的这部作品展现了普通人在大时代历史进程中所走过的艰难曲折的道路...</div>
-                    </li>
-                    <li class="note-item">
-                        <div class="note-title">烘焙尝试：抹茶蛋糕</div>
-                        <div class="note-date">2023年4月5日</div>
-                        <div class="note-content">第一次尝试做抹茶蛋糕，虽然外观不太完美，但味道还不错。下次需要调整烘烤时间...</div>
-                    </li>
-                </ul>
-            </div>
-            
-            <div class="tab-content" id="new-content">
-                <h2>创建新笔记</h2>
-                <div class="editor-container">
-                    <div class="editor">
-                        <textarea id="markdown-editor" placeholder="在这里输入你的笔记（支持Markdown语法）..."># 新笔记标题
-
-## 日期
-2023年4月20日
-
-## 内容
-在这里写下你的想法、感受或笔记...
-
-- 使用Markdown格式
-- 支持**粗体**、*斜体*
-- 可以创建列表
-- 添加[链接](https://example.com)
-- 插入图片: ![描述](图片地址)
-
-> 引用内容也很方便</textarea>
-                        <button class="btn" id="save-btn"><i class="fas fa-save"></i> 保存笔记</button>
+                <h2>笔记列表</h2>
+                
+                <div class="filters">
+                    <input type="text" id="search" placeholder="搜索笔记...">
+                    <select id="year-filter">
+                        <option value="">所有年份</option>
+                    </select>
+                </div>
+                
+                <div id="article-list" class="note-list">
+                    <div class="empty-state" id="loading-state">
+                        <i class="fas fa-spinner loading-spinner"></i>
+                        <p>正在加载笔记...</p>
                     </div>
-                    <div class="preview" id="markdown-preview"></div>
+                </div>
+                
+                <div id="article-viewer" style="display: none;">
+                    <button class="btn" id="back-btn"><i class="fas fa-arrow-left"></i> 返回列表</button>
+                    <div id="article-content"></div>
                 </div>
             </div>
             
             <div class="tab-content" id="about-content">
                 <h2>关于这个手账笔记网站</h2>
-                <p>这是一个基于GitHub Pages的免费手账风格笔记网站，让你可以在线记录日记、笔记和想法。</p>
-                <p><strong>特点：</strong></p>
-                <ul>
-                    <li>手账风格的视觉设计</li>
-                    <li>支持Markdown格式</li>
-                    <li>响应式设计，适配各种设备</li>
-                    <li>完全免费，基于GitHub Pages</li>
-                </ul>
-                <p>要使用这个网站，只需将整个项目上传到你的GitHub仓库，然后启用GitHub Pages功能即可。</p>
-                <p>你可以自由修改和定制这个网站，添加更多功能以满足你的需求。</p>
+                <p>这是一个基于GitHub Pages的手账风格笔记网站，让你可以在线阅读本地创作的Markdown笔记。</p>
+                
+                <h3>使用说明</h3>
+                <p><strong>文件夹结构：</strong></p>
+                <pre>
+your-repository/
+├── index.html          # 本文件
+├── articles/           # 存放笔记目录
+│   ├── index.json      # 笔记索引文件
+│   ├── note1.md        # Markdown笔记
+│   └── note2.md
+└── images/             # 图片目录（可选）
+                </pre>
+                
+                <h3>创建新笔记：</h3>
+                <ol>
+                    <li>在本地创建Markdown文件（.md格式）</li>
+                    <li>按照约定格式编辑内容：</li>
+                </ol>
+                
+                <pre>
+# 笔记标题
+
+> 日期: YYYY-MM-DD
+
+这是笔记内容...
+
+![图片描述](./images/example.jpg)
+                </pre>
+                
+                <h3>更新索引：</h3>
+                <p>编辑articles/index.json文件（JSON格式）：</p>
+                <pre>
+[
+  {
+    "id": "note1",
+    "title": "笔记标题",
+    "date": "2023-04-20",
+    "description": "笔记简要描述..."
+  },
+  ...
+]
+                </pre>
+                
+                <p>将你的笔记文件和索引文件推送到GitHub仓库后，刷新网站即可查看最新内容。</p>
             </div>
         </div>
         
         <div class="instructions">
-            <h3>如何使用这个网站？</h3>
+            <h3>部署指南</h3>
             <ol>
-                <li>点击"写新笔记"标签创建新笔记</li>
-                <li>在左侧编辑区使用Markdown格式编写内容</li>
-                <li>右侧会实时预览渲染效果</li>
-                <li>点击"保存笔记"按钮保存内容（演示功能）</li>
-                <li>在实际使用中，你需要添加后端功能来存储笔记</li>
+                <li>将本index.html上传到你的GitHub仓库根目录</li>
+                <li>创建articles目录并上传你的Markdown文件</li>
+                <li>创建articles/index.json索引文件</li>
+                <li>在仓库设置中启用GitHub Pages</li>
+                <li>访问生成的网址查看你的手账笔记</li>
             </ol>
-            <p><strong>提示：</strong> 这是一个纯前端演示，实际使用时需要添加后端存储功能。</p>
         </div>
     </div>
 
     <script>
+        // 文章数据
+        const articles = [
+            {
+                id: "spring-walk",
+                title: "春日漫步",
+                date: "2023-04-15",
+                description: "今天天气真好，公园里的樱花都开了，粉色的花瓣随风飘落..."
+            },
+            {
+                id: "ordinary-world",
+                title: "读书笔记 - 《平凡的世界》",
+                date: "2023-04-10",
+                description: "路遥的这部作品展现了普通人在大时代历史进程中所走过的艰难曲折的道路..."
+            },
+            {
+                id: "baking-try",
+                title: "烘焙尝试：抹茶蛋糕",
+                date: "2023-04-05",
+                description: "第一次尝试做抹茶蛋糕，虽然外观不太完美，但味道还不错..."
+            }
+        ];
+        
+        // 设置marked选项
+        marked.setOptions({
+            breaks: true,
+            highlight: function(code, lang) {
+                const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+                return hljs.highlight(code, { language }).value;
+            }
+        });
+
         // 切换标签页
         document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
+            tab.addEventListener('click', (e) => {
+                // 打印按钮单独处理
+                if (tab.id === 'print-btn') {
+                    window.print();
+                    return;
+                }
+                
                 // 移除所有active类
                 document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                 document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -385,30 +536,285 @@
             });
         });
         
-        // Markdown预览
-        const editor = document.getElementById('markdown-editor');
-        const preview = document.getElementById('markdown-preview');
+        // 获取DOM元素
+        const articleList = document.getElementById('article-list');
+        const articleViewer = document.getElementById('article-viewer');
+        const articleContent = document.getElementById('article-content');
+        const backBtn = document.getElementById('back-btn');
+        const searchInput = document.getElementById('search');
+        const yearFilter = document.getElementById('year-filter');
         
-        function updatePreview() {
-            preview.innerHTML = marked.parse(editor.value);
+        // 初始化网站
+        document.addEventListener('DOMContentLoaded', async () => {
+            initArticles();
+        });
+        
+        // 初始化文章列表
+        function initArticles() {
+            // 生成年份筛选器
+            generateYearFilters();
+            
+            // 渲染文章列表
+            renderArticleList();
         }
         
-        editor.addEventListener('input', updatePreview);
-        
-        // 初始化预览
-        updatePreview();
-        
-        // 保存按钮（演示功能）
-        document.getElementById('save-btn').addEventListener('click', () => {
-            alert('笔记已保存（演示功能）！在实际应用中，这里会调用后端API保存数据。');
-        });
-        
-        // 笔记点击效果
-        document.querySelectorAll('.note-item').forEach(note => {
-            note.addEventListener('click', () => {
-                alert('在实际应用中，点击笔记会打开详细内容页面。');
+        // 生成年份筛选器
+        function generateYearFilters() {
+            const years = [...new Set(articles.map(a => a.date.substring(0, 4)))].sort((a, b) => b - a);
+            
+            years.forEach(year => {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                yearFilter.appendChild(option);
             });
+            
+            // 添加筛选事件
+            yearFilter.addEventListener('change', renderArticleList);
+            searchInput.addEventListener('input', renderArticleList);
+        }
+        
+        // 渲染文章列表
+        function renderArticleList() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const year = yearFilter.value;
+            
+            const filtered = articles.filter(article => {
+                const matchesSearch = article.title.toLowerCase().includes(searchTerm) || 
+                                     article.description.toLowerCase().includes(searchTerm);
+                const matchesYear = !year || article.date.startsWith(year);
+                return matchesSearch && matchesYear;
+            });
+            
+            if (filtered.length === 0) {
+                articleList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-book"></i>
+                        <p>没有找到符合条件的笔记</p>
+                    </div>`;
+                return;
+            }
+            
+            articleList.innerHTML = filtered.map(article => `
+                <div class="note-item" data-id="${article.id}">
+                    <div class="note-title">${article.title}</div>
+                    <div class="note-date">${formatDate(article.date)}</div>
+                    <div class="note-content">${article.description}</div>
+                </div>
+            `).join('');
+            
+            // 添加点击事件
+            document.querySelectorAll('.note-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const articleId = item.getAttribute('data-id');
+                    openArticle(articleId);
+                });
+            });
+        }
+        
+        // 打开文章
+        function openArticle(id) {
+            // 显示加载状态
+            articleContent.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-spinner loading-spinner"></i>
+                    <p>正在加载笔记内容...</p>
+                </div>`;
+            
+            // 获取文章内容（实际部署时是从articles/目录获取）
+            setTimeout(() => {
+                const article = articles.find(a => a.id === id);
+                const content = getArticleContent(article.id);
+                
+                // 转换为HTML
+                const html = marked.parse(content);
+                articleContent.innerHTML = html;
+                
+                // 高亮代码
+                document.querySelectorAll('pre code').forEach(block => {
+                    hljs.highlightElement(block);
+                });
+                
+                // 切换视图
+                document.getElementById('notes-content').style.display = 'none';
+                articleViewer.style.display = 'block';
+                
+                // 滚动到顶部
+                window.scrollTo(0, 0);
+            }, 500); // 模拟网络延迟
+        }
+        
+        // 获取文章内容（实际部署时这里应从/articles目录加载文件）
+        function getArticleContent(id) {
+            const articlesContent = {
+                "spring-walk": `# 春日漫步
+
+> 日期: 2023-04-15
+> 天气: 晴朗
+
+今天天气真好，公园里的樱花都开了，粉色的花瓣随风飘落，像下了一场樱花雨。
+
+## 美景欣赏
+
+沿着小路漫步，两旁是盛开的樱花树，粉白色的花瓣随风飘舞：
+
+![樱花盛开](https://images.unsplash.com/photo-1516048015710-7a3b4c86be43?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80)
+
+## 遇见的小动物
+
+散步时遇到几只可爱的小猫，它们在长椅上晒太阳：
+
+\`\`\`js
+// 一段有趣的代码
+const cats = [
+  { name: '小白', color: 'white' },
+  { name: '小橘', color: 'orange' },
+  { name: '小花', color: 'multicolor' }
+];
+\`\`\`
+
+## 今日思考
+
+春日的午后，阳光温暖，微风不燥，是最适合思考人生的时候：
+
+> 生活中不是缺少美，而是缺少发现美的眼睛。
+> ——罗丹
+
+## 明日计划
+
+1. 准备周末野餐的食物
+2. 完成读书笔记
+3. 给妈妈打电话
+
+---
+
+**结束语**: 期待明天的阳光依然如此温暖。`,
+                
+                "ordinary-world": `# 读书笔记 - 《平凡的世界》
+
+> 日期: 2023-04-10
+> 作者: 路遥
+
+《平凡的世界》是路遥的代表作，于1986年首次出版。这部小说展现了中国现代城乡社会生活的变迁，以及普通人在大时代历史进程中所走过的艰难曲折的道路。
+
+## 主要人物
+
+1. **孙少平** - 小说主人公，一个出生在农村的知识青年
+2. **田晓霞** - 孙少平的女朋友，思想开放的城市女孩
+3. **孙少安** - 孙少平的哥哥，农村改革先行者
+4. **田福堂** - 村委会主任，传统守旧但关心村民
+
+## 作品主题
+
+- **奋斗与成长**: 在艰难环境中不断奋斗
+- **城乡差距**: 城乡生活的鲜明对比
+- **爱情与社会**: 情感选择受制于社会阶层
+- **时代变革**: 改革开放对普通人的影响
+
+## 经典语录
+
+> 生活包含着更广阔的意义，而不在于我们实际得到了什么；关键是我们的心灵是否充实。
+
+> 其实我们每个人的生活都是一个世界，即使最平凡的人也要为他生活的那个世界而奋斗。
+
+## 个人感悟
+
+这本书让我深刻理解到：
+
+1. 平凡的日常生活中也存在着伟大的精神
+2. 任何时候都要保持对生活的热爱和希望
+3. 努力奋斗是改变命运的唯一途径
+
+---
+
+**评分**: ⭐⭐⭐⭐⭐ (5/5)`,
+                
+                "baking-try": `# 烘焙尝试：抹茶蛋糕
+
+> 日期: 2023-04-05
+> 烘焙时间: 45分钟
+
+今天第一次尝试做抹茶蛋糕，虽然外观不太完美，但味道还不错。
+
+## 所需材料
+
+| 材料 | 分量 |
+|------|------|
+| 面粉 | 200g |
+| 抹茶粉 | 20g |
+| 鸡蛋 | 3个 |
+| 细砂糖 | 150g |
+| 牛奶 | 80ml |
+| 植物油 | 60ml |
+| 泡打粉 | 5g |
+
+## 制作步骤
+
+1. **准备工作**：
+   - 预热烤箱至180°C
+   - 准备6寸圆形蛋糕模具
+
+2. **面糊制作**：
+   - 鸡蛋和糖打发至发白蓬松
+   - 分次加入油和牛奶，搅拌均匀
+   - 筛入面粉、抹茶粉和泡打粉，翻拌均匀
+
+3. **烘焙**：
+   - 倒入模具，震出气泡
+   - 180°C烤35分钟
+   - 牙签插入中心，取出干净即可
+
+## 结果分析
+
+**成功之处**：
+- 抹茶味浓郁
+- 内部组织松软
+- 甜度适中
+
+**不足之处**：
+- 表面开裂
+- 颜色分布不均匀
+- 高度略有塌陷
+
+## 改进计划
+
+1. 下次尝试水浴法烘焙
+2. 减少搅拌时间
+3. 抹茶粉先与少量热牛奶混合
+
+---
+
+**总体评分**: 7.5/10
+
+> **备注**: 虽然不完美，但自己制作的过程充满了乐趣，期待下次尝试！
+`
+            };
+            
+            return articlesContent[id] || "# 内容加载失败\n抱歉，未能找到此笔记的内容。";
+        }
+        
+        // 返回列表
+        backBtn.addEventListener('click', () => {
+            articleViewer.style.display = 'none';
+            document.getElementById('notes-content').style.display = 'block';
+            
+            // 重置筛选状态
+            searchInput.value = '';
+            yearFilter.value = '';
+            renderArticleList();
+            
+            window.scrollTo(0, 0);
         });
+        
+        // 工具函数
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
     </script>
 </body>
 </html>
